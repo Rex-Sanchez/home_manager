@@ -12,9 +12,8 @@ use args::AppArgs;
 use clap::Parser;
 use error::{AppResult, LuaParseError};
 use lua_engine::LuaEngine;
-use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
+#[derive(Debug)]
 pub struct Link {
     pub name: String,
     pub src: PathBuf,
