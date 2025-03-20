@@ -67,7 +67,7 @@ impl LuaEngine {
         let theme_dir = home_dir.map_join(".themes");
         let icon_dir = home_dir.map_join(".local/share/icons");
         let font_dir = home_dir.map_join(".local/share/fonts");
-        let config_dir = home_dir.map_join("/.config");
+        let config_dir = home_dir.map_join(".config");
 
         table.set("HOME_DIR", home_dir)?;
         table.set("SCRIPT_DIR", script_dir)?;

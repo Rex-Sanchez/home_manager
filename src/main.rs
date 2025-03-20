@@ -51,7 +51,7 @@ impl Link {
                 println!("[!] Link Destination already exists..");
                 println!("[#] Overwritting: {dest:?}\n");
                 if dest.is_dir() && !dest.is_symlink() {
-                    std::fs::remove_dir(&dest)?;
+                    std::fs::remove_dir_all(&dest)?;
                 } else if dest.is_file() || dest.is_symlink() {
                     std::fs::remove_file(&dest)?
                 }
