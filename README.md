@@ -83,7 +83,7 @@ env.CONFIG_DIR  -- This is the users config directory '~/.config'
 
 ```lua
 {
- name = "i3 config",
+ name = "i3 config",            -- A descriptive name, 
  src = "/some/absolute/url"     -- The source location of the file / dir that should be linked, this is a required field.  
  dest = "/some/absolute/url"    -- The destination location of the file / dir that should be linked, this is a required field.
  enable = true,                 -- If set to disable this config will not be linked. default is true.
