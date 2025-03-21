@@ -85,6 +85,11 @@ env.ICON_DIR    -- This is the users icons directory '~/.local/share/icons'
 env.FONT_DIR    -- This is the users font directory '~/.local/share/fonts'
 env.CONFIG_DIR  -- This is the users config directory '~/.config'
 
+```
+
+## Utility functions
+
+```lua
 utils.linker()                              -- This function will link the items in the table
 utils.setFont("font-family", 11)            -- Set the Font
 utils.setFontMonospace("font-family", 11)   -- Set the momospace font 
@@ -92,7 +97,8 @@ utils.setGtkIcons("icon set name")          -- Set icons
 utils.setGtkTheme("theme name")             -- Set the gtk theme
 ```
 
-## Setting fonts
+
+### Setting fonts
 Use `fc-list : family` to check for the correct font family names
 
 - `setFont()`
@@ -107,11 +113,11 @@ Use `fc-list : family` to check for the correct font family names
     - Usage: It's used in contexts where alignment is important, such as programming environments or terminal emulators.
 
 
-## Setting themes
+### Setting themes
 - `setGtkTheme()`
     - To set a gtk theme
 
-## Setting icons
+### Setting icons
 - `setGtkIcons()`
     - To set you icon theme
 
