@@ -108,10 +108,12 @@ Use `fc-list : family` to check for the correct font family names
 
 
 ## Setting themes
-To set a gtk theme use the `setGtkTheme()` function
+- `setGtkTheme()`
+    - To set a gtk theme
 
-## Setting Icons
-To set you icon theme use `setGtkIcons()` function
+## Setting icons
+- `setGtkIcons()`
+    - To set you icon theme
 
 
 
