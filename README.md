@@ -59,7 +59,7 @@ utils.linker({
 
 
 utils.setFont("Fira Code Nerd Font", 13)
-utils.setFontMonospcae("Fira Code Nerd Font mono", 13)
+utils.setFontMonospace("Fira Code Nerd Font mono", 13)
 utils.setGtkTheme("Gruvbox-Material-Dark")
 utils.setIcons("Gruvbox-Dark")
 
