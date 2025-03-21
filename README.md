@@ -92,8 +92,26 @@ utils.setGtkIcons("icon set name")          -- Set icons
 utils.setGtkTheme("theme name")             -- Set the gtk theme
 ```
 
+## Setting fonts
+Use `fc-list : family` to check for the correct font family names
+
+- `setFont()`
+    - Purpose: This setting specifies the default font used for most text in GTK applications.
+    - Font Type: It can be any font family, including proportional fonts (where characters have varying widths).
+    - Usage: It's used for standard text rendering in user interfaces, such as labels, buttons, and other non-code text.
+
+- `setFontMonospace()`
+
+    - Purpose: This setting specifies the font used for monospace text, which is typically used in code editors, terminal applications, and text areas where fixed-width characters are required.
+    - Font Type: It must be a monospace font (where each character occupies the same width), making it ideal for displaying code or tabulated text.
+    - Usage: It's used in contexts where alignment is important, such as programming environments or terminal emulators.
 
 
+## Setting themes
+To set a gtk theme use the `setGtkTheme()` function
+
+## Setting Icons
+To set you icon theme use `setGtkIcons()` function
 
 
 
