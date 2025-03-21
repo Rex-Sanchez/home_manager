@@ -1,3 +1,5 @@
 /target
 config.lua
 .luarc.json
+/dotfiles
+/fake_config

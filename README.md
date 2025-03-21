@@ -12,7 +12,7 @@ local scr = env.SCRIPT_DIR
 local config = env.CONFIG_DIR
 
 
-return {
+utils.linker({
   {
     name = "themes",
     src = scr ..  "/themes",
@@ -55,7 +55,7 @@ return {
     enable = true,
     force = true
   }
-}
+})
 
 ```
 
@@ -77,6 +77,8 @@ env.THEME_DIR   -- This is the users theme directory '~/.themes'
 env.ICON_DIR    -- This is the users icons directory '~/.local/share/icons'
 env.FONT_DIR    -- This is the users font directory '~/.local/share/fonts'
 env.CONFIG_DIR  -- This is the users config directory '~/.config'
+
+utils.linker()  -- This function will link the items in the table
 ```
 
 ## Table description

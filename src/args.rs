@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Parser,Clone)]
 #[command()]
 /// This is a simple utility to manage configs / themes / icons / font / and more
 pub struct AppArgs {

@@ -2,36 +2,7 @@ use std::path::{Path, PathBuf};
 
 use mlua::{Lua, Table};
 
-use crate::{
-    Link,
-    args::AppArgs,
-    error::{AppResult, LuaParseError},
-};
-
-impl TryFrom<Result<(usize, Table), mlua::Error>> for Link {
-    type Error = LuaParseError;
-    fn try_from(link: Result<(usize, Table), mlua::Error>) -> Result<Self, Self::Error> {
-        let (i, link) = link.map_err(LuaParseError::UnableToLoadLuaConfig)?;
-
-        let name: String = link
-            .get("name")
-            .map_err(|_| LuaParseError::FieldHasNoName(i))?;
-
-        Ok(Link {
-            name: name.clone(),
-            src: link.get("src").map_err(|_| LuaParseError::MissingField {
-                field_name: "src",
-                table_name: name.clone(),
-            })?,
-            dest: link.get("dest").map_err(|_| LuaParseError::MissingField {
-                field_name: "dest",
-                table_name: name.clone(),
-            })?,
-            force: link.get("force").unwrap_or(false),
-            enable: link.get("enable").unwrap_or(true),
-        })
-    }
-}
+use crate::{args::AppArgs, error::AppResult, link::Link};
 
 trait MapJoin {
     fn map_join(&self, s: &str) -> Option<PathBuf>;
@@ -52,8 +23,9 @@ impl LuaEngine {
     pub fn new() -> Self {
         Self { lua: Lua::new() }
     }
-    pub fn set_globals(&self, args: &AppArgs) -> Result<(), mlua::Error> {
+    pub fn set_globals(&self, args: &AppArgs) -> AppResult<()> {
         let table = self.lua.create_table()?;
+        let utils = self.gen_utils_functions(args.clone())?;
 
         let home_dir = std::env::var("HOME").ok().map(|e| PathBuf::from(e));
 
@@ -77,27 +49,34 @@ impl LuaEngine {
         table.set("CONFIG_DIR", config_dir)?;
 
         self.lua.globals().set("env", table)?;
+        self.lua.globals().set("utils", utils)?;
 
         Ok(())
     }
-    pub fn parse_config(&self, config: &str) -> AppResult<Vec<Link>> {
-        let chuck = self
-            .lua
-            .load(config)
-            .eval::<Table>()
-            .map_err(LuaParseError::UnableToLoadLuaConfig)?;
 
-        let links = chuck
-            .pairs::<usize, Table>()
-            .map(Link::try_from)
-            .collect::<Vec<AppResult<Link>>>();
+    pub fn gen_utils_functions(&self, args: AppArgs) -> AppResult<Table> {
+        let table = self.lua.create_table()?;
+        table.set(
+            "linker",
+            self.lua
+                .create_function(move |_, links: Vec<Link>| link_config_fn(&args, links))?,
+        )?;
 
-        links.iter().for_each(|link| {
-            if let Err(e) = link {
-                eprintln!("{e}")
-            }
-        });
-
-        Ok(links.into_iter().flatten().collect::<Vec<Link>>())
+        Ok(table)
     }
+    pub fn load(&self, config: &str) -> Result<(), mlua::Error> {
+        self.lua.load(config).exec()
+    }
+}
+
+
+
+
+fn link_config_fn(args: &AppArgs, links: Vec<Link>) -> mlua::Result<()> {
+    links.iter().for_each(|link| {
+        if link.enable {
+            let _ = link.create_link(&args);
+        }
+    });
+    Ok(())
 }
