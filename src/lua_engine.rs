@@ -1,4 +1,7 @@
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use mlua::{Lua, Table};
 
@@ -62,6 +65,40 @@ impl LuaEngine {
                 .create_function(move |_, links: Vec<Link>| link_config_fn(&args, links))?,
         )?;
 
+        table.set(
+            "setFont",
+            self.lua
+                .create_function(move |_, (family, size): (String, f32)| {
+                    set_font_fn(family, size)
+                })?,
+        )?;
+        
+        table.set(
+            "setFontMonospace",
+            self.lua
+                .create_function(move |_, (family, size): (String, f32)| {
+                    set_font_mono_fn(family, size)
+                })?,
+        )?;
+
+        table.set(
+            "setGtkIcons",
+            self.lua
+                .create_function(move |_, icon_name: String| set_icons_fn(icon_name))?,
+        )?;
+
+        table.set(
+            "setGtkTheme",
+            self.lua
+                .create_function(move |_, theme_name: String| set_gtk_theme_fn(theme_name))?,
+        )?;
+
+        table.set(
+            "setQtTheme",
+            self.lua
+                .create_function(move |_, theme_name: String| set_qt_theme_fn(theme_name))?,
+        )?;
+
         Ok(table)
     }
     pub fn load(&self, config: &str) -> Result<(), mlua::Error> {
@@ -69,13 +106,63 @@ impl LuaEngine {
     }
 }
 
+fn set_font_mono_fn(family: String, size: f32) -> mlua::Result<()> {
+    Command::new("dconf")
+        .args([
+            "write",
+            "/org/gnome/desktop/interface/monospace-font-name",
+            &format!("\"'{family} {size}'\""),
+        ])
+        .output()?;
 
+    Ok(())
+}
 
+fn set_font_fn(family: String, size: f32) -> mlua::Result<()> {
+    Command::new("dconf")
+        .args([
+            "write",
+            "/org/gnome/desktop/interface/font-name",
+            &format!("\"'{family} {size}'\""),
+        ])
+        .output()?;
+
+    Ok(())
+}
+
+fn set_gtk_theme_fn(theme_name: String) -> mlua::Result<()> {
+    Command::new("dconf")
+        .args([
+            "write",
+            "/org/gnome/desktop/interface/gtk-theme",
+            &format!("\"'{theme_name}'\""),
+        ])
+        .output()?;
+
+    Ok(())
+}
+fn set_icons_fn(icon_name: String) -> mlua::Result<()> {
+    Command::new("dconf")
+        .args([
+            "write",
+            "/org/gnome/desktop/interface/icon-theme",
+            &format!("\"'{icon_name}'\""),
+        ])
+        .output()?;
+
+    Ok(())
+}
+
+fn set_qt_theme_fn(theme_name: String) -> mlua::Result<()> {
+    todo!()
+}
 
 fn link_config_fn(args: &AppArgs, links: Vec<Link>) -> mlua::Result<()> {
     links.iter().for_each(|link| {
         if link.enable {
-            let _ = link.create_link(&args);
+            if let Err(e) = link.create_link(&args) {
+                eprintln!("{e}")
+            }
         }
     });
     Ok(())

@@ -57,6 +57,13 @@ utils.linker({
   }
 })
 
+
+utils.setFont("Fira Code Nerd Font", 13)
+utils.setFontMonospcae("Fira Code Nerd Font mono", 13)
+utils.setGtkTheme("Gruvbox-Material-Dark")
+utils.setIcons("Gruvbox-Dark")
+
+
 ```
 
 Run the config with home_manager to symlink the dirs/files
@@ -78,8 +85,17 @@ env.ICON_DIR    -- This is the users icons directory '~/.local/share/icons'
 env.FONT_DIR    -- This is the users font directory '~/.local/share/fonts'
 env.CONFIG_DIR  -- This is the users config directory '~/.config'
 
-utils.linker()  -- This function will link the items in the table
+utils.linker()                              -- This function will link the items in the table
+utils.setFont("font-family", 11)            -- Set the Font
+utils.setFontMonospace("font-family", 11)   -- Set the momospace font 
+utils.setGtkIcons("icon set name")          -- Set icons
+utils.setGtkTheme("theme name")             -- Set the gtk theme
 ```
+
+
+
+
+
 
 ## Table description
 

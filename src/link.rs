@@ -1,8 +1,14 @@
-use std::{ os::unix::fs, path::{Path, PathBuf}};
+use std::{
+    os::unix::fs,
+    path::{Path, PathBuf},
+};
 
 use mlua::FromLua;
 
-use crate::{args::AppArgs, error::{AppResult, AppError}};
+use crate::{
+    args::AppArgs,
+    error::{AppError, AppResult},
+};
 
 #[derive(Debug)]
 pub struct Link {
@@ -16,18 +22,15 @@ pub struct Link {
 impl FromLua for Link {
     fn from_lua(value: mlua::Value, _: &mlua::Lua) -> mlua::Result<Self> {
         match value {
-            mlua::Value::Table(link) => {
-                let name: String = link.get("name")?;
-                Ok(Link {
-                    name: name.clone(),
-                    src: link.get("src")?,
-                    dest: link.get("dest")?,
-                    force: link.get("force").unwrap_or(false),
-                    enable: link.get("enable").unwrap_or(true),
-                })
-            }
+            mlua::Value::Table(link) => Ok(Link {
+                name: link.get("name")?,
+                src: link.get("src")?,
+                dest: link.get("dest")?,
+                force: link.get("force").unwrap_or(false),
+                enable: link.get("enable").unwrap_or(true),
+            }),
             _ => Err(mlua::Error::FromLuaConversionError {
-                from: "not table",
+                from: "Not a table",
                 to: "Table".into(),
                 message: None,
             }),
@@ -36,7 +39,7 @@ impl FromLua for Link {
 }
 
 impl Link {
-    pub fn create_link(&self, args: &AppArgs) -> AppResult<()> {
+    fn validate_location(&self) -> AppResult<(PathBuf, PathBuf)> {
         let src = self
             .src
             .canonicalize()
@@ -57,11 +60,18 @@ impl Link {
                 table_name: self.name.clone(),
             })?;
 
+        Ok((src, dest))
+    }
+    pub fn create_link(&self, args: &AppArgs) -> AppResult<()> {
+
+        let (src,dest) = self.validate_location()?;
+
         println!("[#] Creating symlink: {dest:?}");
         if dest.exists() {
             if self.force && !args.update {
                 println!("[!] Link Destination already exists..");
                 println!("[#] Overwritting: {dest:?}\n");
+
                 if dest.is_dir() && !dest.is_symlink() {
                     std::fs::remove_dir_all(&dest)?;
                 } else if dest.is_file() || dest.is_symlink() {

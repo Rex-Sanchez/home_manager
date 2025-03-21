@@ -29,9 +29,8 @@ impl From<mlua::Error> for AppError {
 impl Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-                AppError::ConfigNotFound => f.write_str(&format!("![ Error ] ->> Config not found!")),
-            AppError::LocationNotFound { field_name, table_name } => 
-                                f.write_str(&format!("![ Error ] ->> Location not found for field {field_name} for table {table_name}, skipping!")),
+            AppError::ConfigNotFound => f.write_str(&format!("[e] Config not found!")),
+            AppError::LocationNotFound { field_name, table_name } => f.write_str(&format!("[e] Path Not found for field: \"{field_name}\" for table: \"{table_name}\", skipping!")),
             AppError::IOError(error) => f.write_str(&format!("{error}")),
             AppError::FromLua(error) => f.write_str(&format!("{error}")),
         }
